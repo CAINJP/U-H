@@ -299,6 +299,9 @@ cd <carpeta>
 cat <archivo>
 → Muestra el contenido de un archivo
 <br>
+stop
+→ Detiene un audio
+<br>
 home
 → Vuelve al directorio principal
 <br>
@@ -384,6 +387,15 @@ help
 
   } else {
     print("Archivo no encontrado");
+  }
+}
+    else if(text === "stop"){
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    print("Audio detenido");
+  } else {
+    print("No hay audio en reproducción");
   }
 }
 
