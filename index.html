@@ -52,6 +52,14 @@ button{
   overflow:auto;
 }
 
+#screen{
+  scrollbar-width: none; /* Firefox */
+}
+
+#screen::-webkit-scrollbar{
+  display: none; /* Chrome, Safari, Edge */
+}
+
 #output{
   line-height:1.4;
   font-size:15px;
@@ -239,6 +247,11 @@ const output = document.getElementById("output");
 
 function print(text){
   output.innerHTML += "<br>"+text;
+
+  let screen = document.getElementById("screen");
+
+  // 🔽 baja automáticamente al final
+  screen.scrollTop = screen.scrollHeight;
 }
 
 function getDir(path){
