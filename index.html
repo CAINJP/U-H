@@ -8,662 +8,345 @@
 <style>
 
 body{
-    margin:0;
-    background:#000;
-    color:#00ff66;
-    font-family:Courier New, monospace;
+  margin:0;
+  background: radial-gradient(circle at center, #001a0d 0%, #000 70%);
+  color:#00ff66;
+  font-family:Courier New, monospace;
 }
 
+/* LOGIN */
 
 #login{
-
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 }
-
 
 input{
-
-background:black;
-border:1px solid #00ff66;
-color:#00ff66;
-padding:10px;
-font-family:monospace;
-
+  background:black;
+  border:1px solid #00ff66;
+  color:#00ff66;
+  padding:10px;
+  font-family:monospace;
 }
-
 
 button{
-
-margin-top:15px;
-background:#00ff66;
-border:none;
-padding:10px 30px;
-cursor:pointer;
-
+  margin-top:15px;
+  background:#00ff66;
+  border:none;
+  padding:10px 30px;
+  cursor:pointer;
 }
 
+/* TERMINAL */
 
 #terminal{
-
-display:none;
-padding:25px;
-
+  display:none;
+  padding:25px;
 }
-
 
 #screen{
-
-height:90vh;
-overflow:auto;
-
+  height:90vh;
+  overflow:auto;
 }
 
+#output{
+  line-height:1.4;
+  font-size:15px;
+  text-shadow:0 0 5px #00ff66;
+}
 
 #command{
-
-background:black;
-border:none;
-outline:none;
-color:#00ff66;
-font-family:monospace;
-font-size:16px;
-width:70%;
-
+  background:black;
+  border:none;
+  outline:none;
+  color:#00ff66;
+  font-family:monospace;
+  font-size:16px;
+  width:70%;
+  border-right:2px solid #00ff66;
 }
 
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+/* CRT SCANLINES */
+
+#terminal::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,255,102,0.03),
+    rgba(0,255,102,0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events:none;
+}
 
 img{
-
-max-width:350px;
-display:block;
-margin:15px 0;
-
+  max-width:350px;
+  display:block;
+  margin:15px 0;
 }
-
 
 </style>
 
 </head>
 
-
-
 <body>
 
-
-
-
 <div id="login">
-
-
-<h1>
-SYSTEM ACCESS
-</h1>
-
-
-<p>
-Identificación:
-</p>
-
-
-<input id="id">
-
-
-<button onclick="login()">
-ACCEDER
-</button>
-
-
-<p id="error"></p>
-
-
+  <h1>SYSTEM ACCESS</h1>
+  <p>Identificación:</p>
+  <input id="id">
+  <button onclick="login()">ACCEDER</button>
+  <p id="error"></p>
 </div>
-
-
-
-
-
-
 
 <div id="terminal">
 
+  <div id="screen">
 
-<div id="screen">
+    <h2>ARCHIVO CENTRAL // ACCESO CONCEDIDO</h2>
 
+    <div id="output">
+      Acceso autorizado.<br><br>
+      Sistema de archivos clasificados.<br><br>
+      Escribe <b>help</b> para comandos.
+    </div>
 
-<h2>
-ARCHIVO CENTRAL // ACCESO CONCEDIDO
-</h2>
+    <div>
+      <span id="prompt"></span>
+      <input id="command" autofocus>
+    </div>
 
-
-
-<div id="output">
-
-
-Acceso autorizado.<br><br>
-
-
-Sistema de archivos clasificados.<br><br>
-
-
-Escribe <b>help</b> para comandos.
-
+  </div>
 
 </div>
-
-
-
-<div>
-
-<span id="prompt"></span>
-
-<input id="command" autofocus>
-
-</div>
-
-
-
-</div>
-
-</div>
-
-
-
-
-
-
-
-
 
 <script>
 
-
-let username="";
-
-let current="/";
-
-
-
-
-const users=[
-
-"X971",
-"X481"
-
-];
-
-
-
-
-
-const files={
-
-
-
-
-
-"/Informes":{
-
-
-"incidente01.txt":`
-
-INFORME 01
-
-Fecha: 13/05
-
-Actividad extraña detectada.
-
-La investigación continúa.
-
-`,
-
-
-
-"nota.txt":`
-
-NOTA:
-
-No acceder al edificio después
-de medianoche.
-
-`
-
-},
-
-
-
-
-
-
-
-"/REDACTED":{
-
-
-"archivo_clasificado.txt":`
-
-████████████
-
-DOCUMENTO BORRADO
-
-Nivel de acceso:
-RESTRINGIDO
-
-████████████
-
-`
-
-},
-
-
-
-
-
-
-
-"/rumores":{
-
-
-"rumor01.txt":`
-
-RUMOR:
-
-Algunos testigos hablan de
-movimientos dentro del lugar.
-
-No confirmado.
-
-`
-
-},
-
-
-
-
-
-
-
-
-"/personal":{
-
-
-"foto1.html":`
-
-IMAGEN PERSONAL
-
-<img src="https://picsum.photos/400">
-
-`,
-
-
-"foto2.html":`
-
-ARCHIVO VISUAL
-
-<img src="https://picsum.photos/401">
-
-`
-
-}
-
-
-
+let username = "";
+let current = "/";
+
+const users = ["X971","X481"];
+
+/* 📁 ESTRUCTURA JERÁRQUICA */
+const files = {
+  "/": {
+    type: "dir",
+    content: {
+      "Informes": {
+        type: "dir",
+        content: {
+          "2024": {
+            type: "dir",
+            content: {
+              "incidente01.txt": {
+                type: "file",
+                content: "INFORME 01\n\nActividad extraña detectada.\nLa investigación continúa."
+              }
+            }
+          },
+          "nota.txt": {
+            type: "file",
+            content: "No acceder después de medianoche."
+          }
+        }
+      },
+
+      "REDACTED": {
+        type: "dir",
+        content: {
+          "archivo_clasificado.txt": {
+            type: "file",
+            content: "████ DOCUMENTO BORRADO ████"
+          },
+
+          "Fotografías": {
+            type: "dir",
+            content: {
+              "foto1.txt": {
+                type: "file",
+                content: "Imagen eliminada por seguridad nivel 5."
+              }
+            }
+          },
+
+          "Audios": {
+            type: "dir",
+            content: {
+              "audio1.txt": {
+                type: "file",
+                content: "Grabación dañada. Solo ruido blanco."
+              }
+            }
+          }
+        }
+      },
+
+      "rumores": {
+        type: "dir",
+        content: {
+          "rumor01.txt": {
+            type: "file",
+            content: "Movimientos dentro del lugar. No confirmado."
+          }
+        }
+      },
+
+      "personal": {
+        type: "dir",
+        content: {
+          "foto1.html": {
+            type: "file",
+            content: "IMAGEN PERSONAL\n<img src='https://picsum.photos/400'>"
+          }
+        }
+      }
+    }
+  }
 };
 
-
-
-
-
-
-
-
+/* LOGIN */
 
 function login(){
+  let id = document.getElementById("id").value.toUpperCase();
 
-
-let id =
-document.getElementById("id").value
-.toUpperCase();
-
-
-
-
-if(users.includes(id)){
-
-
-username=id;
-
-
-
-document.getElementById("login").style.display="none";
-
-
-document.getElementById("terminal").style.display="block";
-
-
-
-document.getElementById("prompt").innerHTML =
-username+"@archivo:~$";
-
-
+  if(users.includes(id)){
+    username = id;
+    document.getElementById("login").style.display="none";
+    document.getElementById("terminal").style.display="block";
+    document.getElementById("prompt").innerHTML = username+"@archivo:~$";
+  } else {
+    document.getElementById("error").innerHTML = "ID no autorizado";
+  }
 }
 
+/* UTIL */
 
-else{
-
-
-document.getElementById("error").innerHTML =
-"ID no autorizado";
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-const command =
-document.getElementById("command");
-
-
-const output =
-document.getElementById("output");
-
-
-
-
-
-
+const command = document.getElementById("command");
+const output = document.getElementById("output");
 
 function print(text){
-
-
-output.innerHTML +=
-"<br>"+text;
-
-
+  output.innerHTML += "<br>"+text;
 }
 
+function getDir(path){
+  let parts = path.split("/").filter(p => p);
+  let node = files["/"];
 
-
-
-
-
-
-
-
-command.addEventListener("keydown",function(e){
-
-
-
-if(e.key==="Enter"){
-
-
-
-let text =
-command.value.trim();
-
-
-
-print(
-username+
-"@archivo:"+
-current+
-"$ "+
-text
-);
-
-
-
-
-let args =
-text.split(" ");
-
-
-
-
-
-
-
-
-if(text==="help"){
-
-
-print(`
-
-Comandos:
-
-ls<br>
-cd carpeta<br>
-cat archivo<br>
-home<br>
-clear
-
-`);
-
+  for(let p of parts){
+    if(node.content && node.content[p]){
+      node = node.content[p];
+    } else {
+      return null;
+    }
+  }
+  return node;
 }
 
+/* COMANDOS */
 
+command.addEventListener("keydown", function(e){
 
+if(e.key === "Enter"){
 
-else if(text==="ls"){
+  let text = command.value.trim();
 
+  print(username + "@archivo:" + current + "$ " + text);
 
+  let args = text.split(" ");
 
-if(current==="/"){
+  /* HELP */
+  if(text === "help"){
+    print("Comandos: ls | cd | cat | home | clear | pwd");
+  }
 
+  /* LS */
+  else if(text === "ls"){
+    let node = getDir(current);
 
-print("📁 Informes");
-print("📁 REDACTED");
-print("📁 rumores");
-print("📁 personal");
+    if(node && node.type === "dir"){
+      for(let name in node.content){
+        let item = node.content[name];
+        print((item.type === "dir" ? "📁 " : "📄 ") + name);
+      }
+    }
+  }
 
+  /* CD */
+  else if(args[0] === "cd"){
+    let folder = args[1];
 
+    if(folder === ".."){
+      let parts = current.split("/").filter(p => p);
+      parts.pop();
+      current = "/" + parts.join("/");
+      if(current === "/") current = "/";
+      print("Retrocediendo a " + current);
+    } else {
+      let newPath = current === "/" ? "/" + folder : current + "/" + folder;
+      let node = getDir(newPath);
+
+      if(node && node.type === "dir"){
+        current = newPath;
+        print("Accediendo a " + current);
+      } else {
+        print("No existe esa carpeta");
+      }
+    }
+  }
+
+  /* CAT */
+  else if(args[0] === "cat"){
+    let file = args[1];
+    let node = getDir(current);
+
+    if(node && node.content && node.content[file]){
+      print(node.content[file].content);
+    } else {
+      print("Archivo no encontrado");
+    }
+  }
+
+  /* HOME */
+  else if(text === "home"){
+    current = "/";
+    print("Directorio principal");
+  }
+
+  /* PWD */
+  else if(text === "pwd"){
+    print(current);
+  }
+
+  /* CLEAR */
+  else if(text === "clear"){
+    output.innerHTML = "";
+  }
+
+  else {
+    print("Comando desconocido");
+  }
+
+  command.value = "";
+  document.getElementById("prompt").innerHTML =
+    username + "@archivo:" + current + "$";
 }
-
-else{
-
-
-for(let f in files[current]){
-
-
-print("📄 "+f);
-
-
-}
-
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
-
-else if(args[0]==="cd"){
-
-
-
-let folder=args[1];
-
-
-
-if(
-folder==="Informes" ||
-folder==="REDACTED" ||
-folder==="rumores" ||
-folder==="personal"
-){
-
-
-current="/"+folder;
-
-
-print(
-"Accediendo a "+current
-);
-
-
-}
-
-else{
-
-
-print(
-"No existe esa carpeta"
-);
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-
-else if(args[0]==="cat"){
-
-
-
-let file=args[1];
-
-
-
-if(files[current] &&
-files[current][file]){
-
-
-print(
-files[current][file]
-);
-
-
-
-}
-
-else{
-
-
-print(
-"Archivo no encontrado"
-);
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-
-
-else if(text==="home"){
-
-
-current="/";
-
-
-print(
-"Directorio principal"
-);
-
-
-}
-
-
-
-
-
-
-
-
-else if(text==="clear"){
-
-
-output.innerHTML="";
-
-
-}
-
-
-
-
-
-
-
-
-else{
-
-
-print(
-"Comando desconocido"
-);
-
-
-}
-
-
-
-
-
-
-
-command.value="";
-
-
-
-document.getElementById("prompt").innerHTML =
-username+
-"@archivo:"+
-current+
-"$";
-
-
-
-}
-
-
 
 });
 
-
-
-
 </script>
-
-
 
 </body>
 </html>
