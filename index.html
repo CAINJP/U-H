@@ -269,7 +269,30 @@ if(e.key === "Enter"){
 
   /* HELP */
   if(text === "help"){
-    print("Comandos: ls | cd | cat | home | clear | pwd");
+  print(`
+📟 COMANDOS DISPONIBLES:
+
+ls
+→ Lista archivos y carpetas del directorio actual
+
+cd <carpeta>
+→ Entra en una carpeta (cd .. para volver atrás)
+
+cat <archivo>
+→ Muestra el contenido de un archivo de texto
+
+home
+→ Vuelve al directorio principal
+
+pwd
+→ Muestra la ruta actual
+
+clear
+→ Limpia la pantalla del terminal
+
+help
+→ Muestra esta ayuda
+`);
   }
 
   /* LS */
@@ -309,15 +332,42 @@ if(e.key === "Enter"){
 
   /* CAT */
   else if(args[0] === "cat"){
-    let file = args[1];
-    let node = getDir(current);
+  let file = args[1];
+  let node = getDir(current);
 
-    if(node && node.content && node.content[file]){
-      print(node.content[file].content);
-    } else {
-      print("Archivo no encontrado");
+  if(node && node.content && node.content[file]){
+    let item = node.content[file];
+
+    /* 📄 TEXTO */
+    if(item.type === "file"){
+      print(item.content);
     }
+
+    /* 🖼️ IMAGEN */
+    else if(item.type === "image"){
+      print("Mostrando imagen...");
+
+      let img = document.createElement("img");
+      img.src = item.content;
+      img.style.maxWidth = "350px";
+      img.style.display = "block";
+      img.style.margin = "10px 0";
+
+      output.appendChild(img);
+    }
+
+    /* 🎧 AUDIO */
+    else if(item.type === "audio"){
+      print("Reproduciendo audio...");
+
+      let audio = new Audio(item.content);
+      audio.play();
+    }
+
+  } else {
+    print("Archivo no encontrado");
   }
+}
 
   /* HOME */
   else if(text === "home"){
