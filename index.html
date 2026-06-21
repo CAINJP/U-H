@@ -9,8 +9,8 @@
 
 body{
   margin:0;
-  background: radial-gradient(circle at center, #001a0d 0%, #000 70%);
-  color:#00ff66;
+  background: radial-gradient(circle at center, #1a0025 0%, #000 70%);
+  color:#ff2b2b;
   font-family:Courier New, monospace;
 }
 
@@ -26,15 +26,16 @@ body{
 
 input{
   background:black;
-  border:1px solid #00ff66;
-  color:#00ff66;
+  border:1px solid #ff2b2b;
+  color:#ff2b2b;
   padding:10px;
   font-family:monospace;
 }
 
 button{
   margin-top:15px;
-  background:#00ff66;
+  background:#ff2b2b;
+  color:black;
   border:none;
   padding:10px 30px;
   cursor:pointer;
@@ -55,18 +56,18 @@ button{
 #output{
   line-height:1.4;
   font-size:15px;
-  text-shadow:0 0 5px #00ff66;
+  text-shadow:0 0 5px #ff2b2b;
 }
 
 #command{
   background:black;
   border:none;
   outline:none;
-  color:#00ff66;
+  color:#ff2b2b;
   font-family:monospace;
   font-size:16px;
   width:70%;
-  border-right:2px solid #00ff66;
+  border-right:2px solid #ff2b2b;
 }
 
 @keyframes blink {
@@ -84,8 +85,8 @@ button{
   height:100%;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(0,255,102,0.03),
-    rgba(0,255,102,0.03) 1px,
+    rgba(255,0,0,0.05),
+    rgba(255,0,0,0.05) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -114,7 +115,11 @@ img{
 
 <div id="login">
   <h1>SYSTEM ACCESS</h1>
-  <p>Identificación:</p>
+  <img 
+  src="https://raw.githubusercontent.com/CAINJP/U-H/2cb939efa1436afb7d0ca15cd7a391f2a7a0b7c0/img/does-anyone-have-a-png-of-the-cain-logo-v0-wc7fz4j64y3h1.webp"
+  style="width:120px; margin-bottom:20px; filter: drop-shadow(0 0 10px #ff0000);"
+/>
+  <p>Identificación de exorcista:</p>
   <input id="id">
   <button onclick="login()">ACCEDER</button>
   <p id="error"></p>
@@ -193,9 +198,9 @@ const files = {
           "Audios": {
             type: "dir",
             content: {
-              "audio1.txt": {
-                type: "file",
-                content: "Grabación dañada. Solo ruido blanco."
+              "audio1": {
+                type: "audio",
+                content: "https://raw.githubusercontent.com/CAINJP/U-H/b5f8681bb5fc004f255ed7f871de0d3d9928d30a/index.html"
               }
             }
           }
