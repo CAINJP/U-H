@@ -353,11 +353,20 @@ function getDir(path){
   return node;
 }
   
-fetch("https://raw.githubusercontent.com/CAINJP/U-H/main/doc/a.json")
-  .then(res => res.text())
-  .then(data => {
-    console.log(data);
-  });
+async function loadGitHubFile(){
+
+  let res = await fetch("https://raw.githubusercontent.com/CAINJP/U-H/main/doc/a,json");
+
+  let data = await res.text();
+
+  let node = getDir("/Informes");
+
+  node.content["nota.txt"] = {
+    type: "file",
+    content: data
+  };
+
+}
 /* COMANDOS */
 
 command.addEventListener("keydown", function(e){
