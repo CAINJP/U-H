@@ -189,14 +189,24 @@ const files = {
           },
 
           "Fotografías": {
-            type: "dir",
-            content: {
-              "foto1": {
-                type: "image",
-                content: "https://raw.githubusercontent.com/CAINJP/U-H/6178eb803df9219a1fff9f8a632f37e7c34f7602/img/imagen.gif"
-              }
-            }
-          },
+  type: "dir",
+  content: {
+
+    "foto1": {
+      type: "image",
+      content: "https://raw.githubusercontent.com/CAINJP/U-H/6178eb803df9219a1fff9f8a632f37e7c34f7602/img/imagen.gif"
+    },
+
+    "expediente01": {
+      type: "document",
+      content: {
+        text: "EXPEDIENTE FOTOGRÁFICO\n\nImagen recuperada del archivo restringido.\nNivel de amenaza: DESCONOCIDO.",
+        image: "https://raw.githubusercontent.com/CAINJP/U-H/6178eb803df9219a1fff9f8a632f37e7c34f7602/img/imagen.gif"
+      }
+    }
+
+  }
+},
 
           "Audios": {
             type: "dir",
