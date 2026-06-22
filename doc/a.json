@@ -1,1 +1,9 @@
-pito y culo
+{
+  "evidencia.txt": {
+    "type": "document",
+    "content": {
+      "text": "Fotografía recuperada",
+      "image": "imagenes/pista.jpg"
+    }
+  }
+}
