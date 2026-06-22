@@ -360,6 +360,7 @@ else if(args[0] === "cat"){
   let file = args[1];
   let node = getDir(current);
 
+
   if(node && node.content && node.content[file]){
 
     let item = node.content[file];
@@ -378,11 +379,38 @@ else if(args[0] === "cat"){
 
       print("Mostrando imagen...");
 
+
       let img = document.createElement("img");
+
       img.src = item.content;
+
       img.style.maxWidth = "350px";
       img.style.display = "block";
       img.style.margin = "10px 0";
+
+
+      output.appendChild(img);
+
+    }
+
+
+    /* TEXTO + IMAGEN */
+    else if(item.type === "document"){
+
+
+      print(item.content.text);
+
+
+      let img = document.createElement("img");
+
+
+      img.src = item.content.image;
+
+
+      img.style.maxWidth = "350px";
+      img.style.display = "block";
+      img.style.margin = "10px 0";
+
 
       output.appendChild(img);
 
@@ -391,6 +419,7 @@ else if(args[0] === "cat"){
 
     /* 🎧 AUDIO */
     else if(item.type === "audio"){
+
 
       print("Reproduciendo audio...");
 
@@ -412,37 +441,48 @@ else if(args[0] === "cat"){
 
       });
 
+
     }
 
 
   } else {
 
+
     print("Archivo no encontrado");
+
 
   }
 
 }
 
 
-/* ⛔ STOP AUDIO */
+/* STOP AUDIO */
 else if(text === "stop"){
+
 
   if(currentAudio){
 
+
     currentAudio.pause();
+
     currentAudio.currentTime = 0;
+
     currentAudio = null;
+
 
     print("Audio detenido");
 
+
   } else {
+
 
     print("No hay audio en reproducción");
 
+
   }
 
-}
 
+}
   /* HOME */
   else if(text === "home"){
     current = "/";
