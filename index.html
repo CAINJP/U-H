@@ -149,9 +149,12 @@ img{
 <script>
 
 let username = "";
-let current = "/";
+let current = "";
+
+let currentAudio = null;
 
 const users = ["X971","X481"];
+
 
 /* 📁 ESTRUCTURA JERÁRQUICA */
 const files = {
@@ -378,25 +381,46 @@ help
     }
 
     /* 🎧 AUDIO */
-    else if(item.type === "audio"){
-      print("Reproduciendo audio...");
+else if(item.type === "audio"){
 
-      let audio = new Audio(item.content);
-      audio.play();
-    }
+  print("Reproduciendo audio...");
 
-  } else {
-    print("Archivo no encontrado");
-  }
-}
-    else if(text === "stop"){
+  // detener audio anterior
   if(currentAudio){
     currentAudio.pause();
     currentAudio.currentTime = 0;
-    print("Audio detenido");
-  } else {
-    print("No hay audio en reproducción");
   }
+
+  // guardar audio actual
+  currentAudio = new Audio(item.content);
+
+  currentAudio.play().catch(()=>{
+    print("El navegador bloqueó la reproducción");
+  });
+
+}
+
+} else {
+  print("Archivo no encontrado");
+}
+
+
+/*  STOP AUDIO */
+else if(text === "stop"){
+
+  if(currentAudio){
+
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+
+    print("Audio detenido");
+
+  } else {
+
+    print("No hay audio en reproducción");
+
+  }
+
 }
 
   /* HOME */
