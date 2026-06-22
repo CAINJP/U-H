@@ -352,7 +352,12 @@ function getDir(path){
   }
   return node;
 }
-
+  
+fetch("https://raw.githubusercontent.com/CAINJP/U-H/main/Informes/2024/incidente01.txt")
+  .then(res => res.text())
+  .then(data => {
+    console.log(data);
+  });
 /* COMANDOS */
 
 command.addEventListener("keydown", function(e){
