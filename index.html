@@ -106,7 +106,63 @@ img{
 #screen::-webkit-scrollbar{
   display: none; /* Chrome, Safari, Edge */
 }
+/* ANIMACION DE ACCESO */
 
+#loading{
+
+  display:none;
+  height:100vh;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+
+}
+
+
+#loadingText{
+
+  font-size:18px;
+  text-shadow:0 0 10px #ff2b2b;
+
+}
+
+
+.loader{
+
+  width:250px;
+  height:4px;
+  border:1px solid #ff2b2b;
+  margin-top:20px;
+  overflow:hidden;
+
+}
+
+
+.loader::after{
+
+  content:"";
+  display:block;
+  height:100%;
+  width:0%;
+  background:#ff2b2b;
+
+  animation:loading 3s forwards;
+
+}
+
+
+@keyframes loading{
+
+  0%{
+    width:0%;
+  }
+
+  100%{
+    width:100%;
+  }
+
+}
 </style>
 
 </head>
@@ -125,6 +181,17 @@ img{
   <p id="error"></p>
 </div>
 
+
+<div id="loading">
+
+<h1 id="loadingText">
+INICIALIZANDO...
+</h1>
+
+<div class="loader"></div>
+
+</div>
+  
 <div id="terminal">
 
   <div id="screen">
@@ -519,7 +586,104 @@ else if(text === "stop"){
 }
 
 });
+/* ANIMACION POST LOGIN */
 
+let oldLogin = login;
+
+
+login = function(){
+
+
+let id = document.getElementById("id").value.toUpperCase();
+
+
+if(users.includes(id)){
+
+
+username = id;
+
+
+document.getElementById("login").style.display="none";
+
+
+let loading =
+document.getElementById("loading");
+
+
+loading.style.display="flex";
+
+
+
+let text =
+document.getElementById("loadingText");
+
+
+let sequence=[
+
+"VERIFICANDO CREDENCIALES...",
+"ACCESO A ARCHIVOS...",
+"DESCIFRANDO DATOS...",
+"SISTEMA ONLINE"
+
+];
+
+
+let i=0;
+
+
+
+let timer=setInterval(()=>{
+
+
+text.innerHTML=sequence[i];
+
+
+i++;
+
+
+if(i>=sequence.length){
+
+
+clearInterval(timer);
+
+
+
+setTimeout(()=>{
+
+
+loading.style.display="none";
+
+
+document.getElementById("terminal").style.display="block";
+
+
+document.getElementById("prompt").innerHTML =
+username+"@archivo:~$";
+
+
+},500);
+
+
+}
+
+
+},700);
+
+
+
+}
+
+else{
+
+
+document.getElementById("error").innerHTML =
+"ID no autorizado";
+
+
+}
+
+
+}
 </script>
 
 </body>
