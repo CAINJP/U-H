@@ -437,99 +437,76 @@ else if(args[0] === "cat"){
   let file = args[1];
   let node = getDir(current);
 
-
   if(node && node.content && node.content[file]){
 
     let item = node.content[file];
 
+    const githubBase = "https://raw.githubusercontent.com/CAINJP/U-H/main/";
 
-    /* 📄 TEXTO */
-    if(item.type === "file"){
+    let path = current === "/" ? "" : current.replace(/^\//, "") + "/";
 
-      print(item.content);
+    let githubUrl = githubBase + path + file;
 
-    }
+    // 🔥 1. intentar GitHub primero
+    fetch(githubUrl)
+      .then(async res => {
 
+        if(res.ok){
 
-    /* 🖼️ IMAGEN */
-    else if(item.type === "image"){
+          let data = await res.text();
+          print(data);
+          return;
 
-      print("Mostrando imagen...");
+        }
 
+        throw new Error("no github");
 
-      let img = document.createElement("img");
+      })
+      .catch(() => {
 
-      img.src = item.content;
+        // 🔥 2. fallback local
 
-      img.style.maxWidth = "350px";
-      img.style.display = "block";
-      img.style.margin = "10px 0";
+        if(item.type === "file"){
+          print(item.content);
+        }
 
+        else if(item.type === "image"){
+          print("Mostrando imagen...");
+          let img = document.createElement("img");
+          img.src = item.content;
+          output.appendChild(img);
+        }
 
-      output.appendChild(img);
+        else if(item.type === "document"){
+          print(item.content.text);
+          let img = document.createElement("img");
+          img.src = item.content.image;
+          output.appendChild(img);
+        }
 
-    }
+        else if(item.type === "audio"){
 
+          print("Reproduciendo audio...");
 
-    /* TEXTO + IMAGEN */
-    else if(item.type === "document"){
+          if(currentAudio){
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+          }
 
+          currentAudio = new Audio(item.content);
+          currentAudio.play();
 
-      print(item.content.text);
+        }
 
-
-      let img = document.createElement("img");
-
-
-      img.src = item.content.image;
-
-
-      img.style.maxWidth = "350px";
-      img.style.display = "block";
-      img.style.margin = "10px 0";
-
-
-      output.appendChild(img);
-
-    }
-
-
-    /* 🎧 AUDIO */
-    else if(item.type === "audio"){
-
-
-      print("Reproduciendo audio...");
-
-
-      if(currentAudio){
-
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-
-      }
-
-
-      currentAudio = new Audio(item.content);
-
-
-      currentAudio.play().catch(()=>{
-
-        print("El navegador bloqueó la reproducción");
+        else {
+          print("Archivo no encontrado");
+        }
 
       });
 
-
-    }
-
-
   } else {
-
-
     print("Archivo no encontrado");
-
-
   }
-
 }
 
 
