@@ -128,7 +128,7 @@ const files = {
   "/": {
     type: "dir",
     content: {
-      "Informes": {
+      "doc": {
         type: "dir",
         content: {}
       }
@@ -137,7 +137,7 @@ const files = {
 };
 
 /* 🔥 CARGA DESDE GITHUB */
-async function loadInformesFromGitHub(){
+async function loaddocFromGitHub(){
 
   const url = "https://raw.githubusercontent.com/CAINJP/U-H/main/doc/a.json";
 
@@ -170,7 +170,7 @@ function login(){
     document.getElementById("prompt").innerHTML =
       username+"@archivo:~$";
 
-    loadInformesFromGitHub(); // 🔥 IMPORTANTE
+    loaddocFromGitHub(); // 🔥 IMPORTANTE
 
   } else {
     document.getElementById("error").innerHTML = "ID no autorizado";
