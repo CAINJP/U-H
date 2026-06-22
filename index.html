@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <title>Archivo Central</title>
 
 <style>
+
 body{
   margin:0;
   background: radial-gradient(circle at center, #1a0025 0%, #000 70%);
   color:#ff2b2b;
   font-family:Courier New, monospace;
 }
+
+/* LOGIN */
 
 #login{
   height:100vh;
@@ -36,6 +40,8 @@ button{
   padding:10px 30px;
   cursor:pointer;
 }
+
+/* TERMINAL */
 
 #terminal{
   display:none;
@@ -64,6 +70,12 @@ button{
   border-right:2px solid #ff2b2b;
 }
 
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+/* CRT SCANLINES */
+
 #terminal::before{
   content:"";
   position:fixed;
@@ -86,105 +98,245 @@ img{
   display:block;
   margin:15px 0;
 }
+  
+#screen{
+  scrollbar-width: none; /* Firefox */
+}
 
 #screen::-webkit-scrollbar{
+  display: none; /* Chrome, Safari, Edge */
+}
+/* ANIMACION DE ACCESO */
+
+#loading{
+
   display:none;
+  height:100vh;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+
+}
+
+
+#loadingText{
+
+  font-size:18px;
+  text-shadow:0 0 10px #ff2b2b;
+
+}
+
+
+.loader{
+
+  width:250px;
+  height:4px;
+  border:1px solid #ff2b2b;
+  margin-top:20px;
+  overflow:hidden;
+
+}
+
+
+.loader::after{
+
+  content:"";
+  display:block;
+  height:100%;
+  width:0%;
+  background:#ff2b2b;
+
+  animation:loading 3s forwards;
+
+}
+
+
+@keyframes loading{
+
+  0%{
+    width:0%;
+  }
+
+  100%{
+    width:100%;
+  }
+
 }
 </style>
+
 </head>
 
 <body>
 
 <div id="login">
   <h1>AS ABOVE / SO BELOW</h1>
+  <img 
+  src="https://raw.githubusercontent.com/CAINJP/U-H/2cb939efa1436afb7d0ca15cd7a391f2a7a0b7c0/img/does-anyone-have-a-png-of-the-cain-logo-v0-wc7fz4j64y3h1.webp"
+  style="width:120px; margin-bottom:20px; filter: drop-shadow(0 0 10px #ff0000);"
+/>
+  <p>Identificación de exorcista:</p>
   <input id="id">
   <button onclick="login()">ACCEDER</button>
   <p id="error"></p>
 </div>
 
-<div id="terminal">
-  <div id="screen">
-    <h2>ARCHIVO CENTRAL</h2>
 
-    <div id="output"></div>
+<div id="loading">
+
+<h1 id="loadingText">
+INICIALIZANDO...
+</h1>
+
+<div class="loader"></div>
+
+</div>
+  
+<div id="terminal">
+
+  <div id="screen">
+
+    <h2>ARCHIVO CENTRAL // ACCESO CONCEDIDO</h2>
+
+    <div id="output">
+      Acceso autorizado.<br><br>
+      Sistema de archivos clasificados.<br><br>
+      Escribe <b>help</b> para comandos.
+    </div>
 
     <div>
       <span id="prompt"></span>
-      <input id="command">
+      <input id="command" autofocus>
     </div>
+
   </div>
+
 </div>
 
 <script>
 
 let username = "";
-let current = "/";
+let current = "";
+
 let currentAudio = null;
 
 const users = ["X971","X481"];
 
-/* 📁 SISTEMA DE ARCHIVOS */
+
+/* 📁 ESTRUCTURA JERÁRQUICA */
 const files = {
   "/": {
     type: "dir",
     content: {
-      "doc": {
+      "Informes": {
         type: "dir",
-        content: {}
+        content: {
+          "2024": {
+            type: "dir",
+            content: {
+              "incidente01.txt": {
+                type: "file",
+                content: "INFORME 01\n\nActividad extraña detectada.\nLa investigación continúa."
+              }
+            }
+          },
+          "nota.txt": {
+            type: "file",
+            content: "No acceder después de medianoche."
+          }
+        }
+      },
+
+      "REDACTED": {
+        type: "dir",
+        content: {
+          "archivo_clasificado.txt": {
+            type: "file",
+            content: "████ DOCUMENTO BORRADO ████"
+          },
+
+          "Fotografías": {
+  type: "dir",
+  content: {
+
+    "foto1": {
+      type: "image",
+      content: "https://raw.githubusercontent.com/CAINJP/U-H/6178eb803df9219a1fff9f8a632f37e7c34f7602/img/imagen.gif"
+    },
+
+    "expediente01": {
+      type: "document",
+      content: {
+        text: "EXPEDIENTE FOTOGRÁFICO\n\nImagen recuperada del archivo restringido.\nNivel de amenaza: DESCONOCIDO.",
+        image: "https://raw.githubusercontent.com/CAINJP/U-H/6178eb803df9219a1fff9f8a632f37e7c34f7602/img/imagen.gif"
+      }
+    }
+
+  }
+},
+
+          "Audios": {
+            type: "dir",
+            content: {
+              "audio1": {
+                type: "audio",
+                content: "https://raw.githubusercontent.com/CAINJP/U-H/faf91a3d6c099b2f38b8b5838feb7e1bb7c32db3/audio/TV%E3%82%A2%E3%83%8B%E3%83%A1%E3%80%8C%E3%83%90%E3%83%93%E3%83%AD%E3%83%B3%E3%80%8DBabylon%20Anime%20OST%20-%20A%20Given%20(Ai%20Magase)%20%5Bjo6uGIGwrOw%5D.mp3"
+              }
+            }
+          }
+        }
+      },
+
+      "rumores": {
+        type: "dir",
+        content: {
+          "rumor01.txt": {
+            type: "file",
+            content: "Movimientos dentro del lugar. No confirmado."
+          }
+        }
+      },
+
+      "personal": {
+        type: "dir",
+        content: {
+          "foto1.html": {
+            type: "file",
+            content: "IMAGEN PERSONAL\n<img src='https://picsum.photos/400'>"
+          }
+        }
       }
     }
   }
 };
 
-/* 🔥 CARGA DESDE GITHUB */
-async function loaddocFromGitHub(){
-
-  const url = "https://raw.githubusercontent.com/CAINJP/U-H/main/doc/a.json";
-
-  try{
-    let res = await fetch(url);
-    let data = await res.json();
-
-    let node = getDir("/doc");
-    node.content = data;
-
-    print("📡 Informes cargados desde GitHub");
-
-  } catch(e){
-    print("❌ Error cargando Informes");
-  }
-}
-
 /* LOGIN */
-function login(){
 
+function login(){
   let id = document.getElementById("id").value.toUpperCase();
 
   if(users.includes(id)){
-
     username = id;
-
     document.getElementById("login").style.display="none";
     document.getElementById("terminal").style.display="block";
-
-    document.getElementById("prompt").innerHTML =
-      username+"@archivo:~$";
-
-    loaddocFromGitHub(); // 🔥 IMPORTANTE
-
+    document.getElementById("prompt").innerHTML = username+"@archivo:~$";
   } else {
     document.getElementById("error").innerHTML = "ID no autorizado";
   }
 }
 
 /* UTIL */
+
 const command = document.getElementById("command");
 const output = document.getElementById("output");
 
 function print(text){
-  output.innerHTML += "<br>" + text;
-  document.getElementById("screen").scrollTop =
-    document.getElementById("screen").scrollHeight;
+  output.innerHTML += "<br>"+text;
+
+  let screen = document.getElementById("screen");
+
+  // 🔽 baja automáticamente al final
+  screen.scrollTop = screen.scrollHeight;
 }
 
 function getDir(path){
@@ -202,80 +354,336 @@ function getDir(path){
 }
 
 /* COMANDOS */
+
 command.addEventListener("keydown", function(e){
 
-if(e.key !== "Enter") return;
+if(e.key === "Enter"){
 
-let text = command.value.trim();
-print(username + "@archivo:" + current + "$ " + text);
+  let text = command.value.trim();
 
-let args = text.split(" ");
+  print(username + "@archivo:" + current + "$ " + text);
 
-/* LS */
-if(text === "ls"){
+  let args = text.split(" ");
 
-  let node = getDir(current);
-
-  for(let name in node.content){
-    let item = node.content[name];
-    print((item.type === "dir" ? "📁 " : "📄 ") + name);
+  /* HELP */
+  if(text === "help"){
+  print(`
+📟 COMANDOS DISPONIBLES:
+<br>
+ls
+→ Lista archivos y carpetas del directorio actual
+<br>
+cd <carpeta>
+→ Entra en una carpeta (cd .. para volver atrás)
+<br>
+cat <archivo>
+→ Muestra el contenido de un archivo
+<br>
+stop
+→ Detiene un audio
+<br>
+home
+→ Vuelve al directorio principal
+<br>
+pwd
+→ Muestra la ruta actual
+<br>
+clear
+→ Limpia la pantalla del terminal
+<br>
+help
+→ Muestra esta ayuda
+`);
   }
-}
 
-/* CD */
-else if(args[0] === "cd"){
+  /* LS */
+  else if(text === "ls"){
+    let node = getDir(current);
 
-  let folder = args[1];
-
-  if(folder === ".."){
-    let parts = current.split("/").filter(p => p);
-    parts.pop();
-    current = "/" + parts.join("/");
-    if(current === "") current = "/";
-  } else {
-    let newPath = current === "/" ? "/" + folder : current + "/" + folder;
-    if(getDir(newPath)){
-      current = newPath;
-    } else {
-      print("No existe");
+    if(node && node.type === "dir"){
+      for(let name in node.content){
+        let item = node.content[name];
+        print((item.type === "dir" ? "📁 " : "📄 ") + name);
+      }
     }
   }
-}
 
-/* CAT */
+  /* CD */
+  else if(args[0] === "cd"){
+    let folder = args[1];
+
+    if(folder === ".."){
+      let parts = current.split("/").filter(p => p);
+      parts.pop();
+      current = "/" + parts.join("/");
+      if(current === "/") current = "/";
+      print("Retrocediendo a " + current);
+    } else {
+      let newPath = current === "/" ? "/" + folder : current + "/" + folder;
+      let node = getDir(newPath);
+
+      if(node && node.type === "dir"){
+        current = newPath;
+        print("Accediendo a " + current);
+      } else {
+        print("No existe esa carpeta");
+      }
+    }
+  }
+
+  /* CAT */
 else if(args[0] === "cat"){
 
   let file = args[1];
   let node = getDir(current);
 
-  if(node && node.content[file]){
+
+  if(node && node.content && node.content[file]){
 
     let item = node.content[file];
 
+
+    /* 📄 TEXTO */
     if(item.type === "file"){
+
       print(item.content);
+
     }
 
+
+    /* 🖼️ IMAGEN */
+    else if(item.type === "image"){
+
+      print("Mostrando imagen...");
+
+
+      let img = document.createElement("img");
+
+      img.src = item.content;
+
+      img.style.maxWidth = "350px";
+      img.style.display = "block";
+      img.style.margin = "10px 0";
+
+
+      output.appendChild(img);
+
+    }
+
+
+    /* TEXTO + IMAGEN */
+    else if(item.type === "document"){
+
+
+      print(item.content.text);
+
+
+      let img = document.createElement("img");
+
+
+      img.src = item.content.image;
+
+
+      img.style.maxWidth = "350px";
+      img.style.display = "block";
+      img.style.margin = "10px 0";
+
+
+      output.appendChild(img);
+
+    }
+
+
+    /* 🎧 AUDIO */
+    else if(item.type === "audio"){
+
+
+      print("Reproduciendo audio...");
+
+
+      if(currentAudio){
+
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+
+      }
+
+
+      currentAudio = new Audio(item.content);
+
+
+      currentAudio.play().catch(()=>{
+
+        print("El navegador bloqueó la reproducción");
+
+      });
+
+
+    }
+
+
   } else {
+
+
     print("Archivo no encontrado");
+
+
   }
+
 }
 
-else if(text === "pwd"){
-  print(current);
+
+/* STOP AUDIO */
+else if(text === "stop"){
+
+
+  if(currentAudio){
+
+
+    currentAudio.pause();
+
+    currentAudio.currentTime = 0;
+
+    currentAudio = null;
+
+
+    print("Audio detenido");
+
+
+  } else {
+
+
+    print("No hay audio en reproducción");
+
+
+  }
+
+
+}
+  /* HOME */
+  else if(text === "home"){
+    current = "/";
+    print("Directorio principal");
+  }
+
+  /* PWD */
+  else if(text === "pwd"){
+    print(current);
+  }
+
+  /* CLEAR */
+  else if(text === "clear"){
+    output.innerHTML = "";
+  }
+
+  else {
+    print("Comando desconocido");
+  }
+
+  command.value = "";
+  document.getElementById("prompt").innerHTML =
+    username + "@archivo:" + current + "$";
 }
 
-else if(text === "clear"){
-  output.innerHTML = "";
-}
-
-else {
-  print("Comando desconocido");
-}
-
-command.value = "";
 });
+/* ANIMACION POST LOGIN */
 
+let oldLogin = login;
+
+
+login = function(){
+
+
+let id = document.getElementById("id").value.toUpperCase();
+
+
+if(users.includes(id)){
+
+
+username = id;
+
+
+document.getElementById("login").style.display="none";
+
+
+let loading =
+document.getElementById("loading");
+
+
+loading.style.display="flex";
+
+
+
+let text =
+document.getElementById("loadingText");
+
+
+let sequence=[
+
+"VERIFICANDO CREDENCIALES...",
+"ACCESO A ARCHIVOS...",
+"DESCIFRANDO DATOS...",
+"SISTEMA ONLINE"
+
+];
+
+
+let i=0;
+
+
+
+let timer=setInterval(()=>{
+
+
+text.innerHTML=sequence[i];
+
+
+i++;
+
+
+if(i>=sequence.length){
+
+
+clearInterval(timer);
+
+
+
+setTimeout(()=>{
+
+
+loading.style.display="none";
+
+
+document.getElementById("terminal").style.display="block";
+
+
+document.getElementById("prompt").innerHTML =
+username+"@archivo:~$";
+
+
+},500);
+
+
+}
+
+
+},700);
+
+
+
+}
+
+else{
+
+
+document.getElementById("error").innerHTML =
+"ID no autorizado";
+
+
+}
+
+
+}
 </script>
 
 </body>
