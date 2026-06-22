@@ -355,20 +355,27 @@ help
   }
 
   /* CAT */
-  else if(args[0] === "cat"){
+else if(args[0] === "cat"){
+
   let file = args[1];
   let node = getDir(current);
 
   if(node && node.content && node.content[file]){
+
     let item = node.content[file];
+
 
     /* 📄 TEXTO */
     if(item.type === "file"){
+
       print(item.content);
+
     }
+
 
     /* 🖼️ IMAGEN */
     else if(item.type === "image"){
+
       print("Mostrando imagen...");
 
       let img = document.createElement("img");
@@ -378,40 +385,53 @@ help
       img.style.margin = "10px 0";
 
       output.appendChild(img);
+
     }
 
+
     /* 🎧 AUDIO */
-else if(item.type === "audio"){
+    else if(item.type === "audio"){
 
-  print("Reproduciendo audio...");
+      print("Reproduciendo audio...");
 
-  // detener audio anterior
-  if(currentAudio){
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
+
+      if(currentAudio){
+
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+
+      }
+
+
+      currentAudio = new Audio(item.content);
+
+
+      currentAudio.play().catch(()=>{
+
+        print("El navegador bloqueó la reproducción");
+
+      });
+
+    }
+
+
+  } else {
+
+    print("Archivo no encontrado");
+
   }
 
-  // guardar audio actual
-  currentAudio = new Audio(item.content);
-
-  currentAudio.play().catch(()=>{
-    print("El navegador bloqueó la reproducción");
-  });
-
-}
-
-} else {
-  print("Archivo no encontrado");
 }
 
 
-/*  STOP AUDIO */
+/* ⛔ STOP AUDIO */
 else if(text === "stop"){
 
   if(currentAudio){
 
     currentAudio.pause();
     currentAudio.currentTime = 0;
+    currentAudio = null;
 
     print("Audio detenido");
 
